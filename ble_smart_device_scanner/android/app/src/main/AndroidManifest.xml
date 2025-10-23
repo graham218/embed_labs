@@ -20,32 +20,19 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-    <!-- Optional: For Android 10+ to improve BLE scanning -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-
     <!-- Bluetooth LE feature -->
     <uses-feature
         android:name="android.hardware.bluetooth_le"
         android:required="true" />
 
-    <!-- Support for different screen sizes -->
-    <supports-screens
-        android:smallScreens="true"
-        android:normalScreens="true"
-        android:largeScreens="true"
-        android:xlargeScreens="true" />
-
     <application
         android:label="BLE Smart Device Scanner"
-        android:name=".Application"
+        android:name="io.flutter.app.FlutterApplication"
         android:icon="@mipmap/ic_launcher"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:allowBackup="true"
         android:theme="@style/LaunchTheme"
         android:usesCleartextTraffic="true"
         android:requestLegacyExternalStorage="true"
-        android:appCategory="productivity"
         tools:replace="android:label,android:theme,android:name">
 
         <activity
@@ -55,8 +42,7 @@
             android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
-            android:windowSoftInputMode="adjustResize"
-            android:taskAffinity="">
+            android:windowSoftInputMode="adjustResize">
 
             <meta-data
                 android:name="io.flutter.embedding.android.NormalTheme"
@@ -68,32 +54,9 @@
             </intent-filter>
         </activity>
 
-        <!-- BLE Service (optional - for background scanning) -->
-        <service
-            android:name=".BluetoothLEService"
-            android:enabled="true"
-            android:exported="false" />
-
-        <!-- Foreground Service for BLE scanning in background -->
-        <service
-            android:name=".BluetoothForegroundService"
-            android:enabled="true"
-            android:exported="false"
-            android:foregroundServiceType="connectedDevice" />
-
         <!-- Flutter embedding -->
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-
-        <!-- For compatibility with newer Android versions -->
-        <meta-data
-            android:name="android.max_aspect"
-            android:value="2.1" />
-
-        <!-- For Google Play Store filtering -->
-        <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
     </application>
 </manifest>
