@@ -9,7 +9,7 @@ android {
     namespace = "com.embedlabs.ble_smart_device_scanner"
     compileSdk = flutter.compileSdkVersion
 
-    //Fixed NDK version (was flutter.ndkVersion before)
+    //Fixed NDK version
     ndkVersion = "27.0.12077973"
 
     compileOptions {
@@ -22,10 +22,7 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.embedlabs.ble_smart_device_scanner"
-
-        // These use Flutter’s project values — you can adjust if needed.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -34,13 +31,23 @@ android {
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
+            // TODO: Add your own signing config for the release build if needed
             // signingConfig = signingConfigs.release
+
+            //Disable shrinking for now (fixes your current build error)
             isMinifyEnabled = false
+            isShrinkResources = false
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+
+        debug {
+            //Make sure shrinking is off in debug mode too
+            isMinifyEnabled = false
+            isShrinkResources = false
         }
     }
 }
