@@ -27,13 +27,11 @@
 
     <application
         android:label="BLE Smart Device Scanner"
-        android:name="io.flutter.app.FlutterApplication"
         android:icon="@mipmap/ic_launcher"
         android:allowBackup="true"
         android:theme="@style/LaunchTheme"
         android:usesCleartextTraffic="true"
-        android:requestLegacyExternalStorage="true"
-        tools:replace="android:label,android:theme,android:name">
+        android:requestLegacyExternalStorage="true">
 
         <activity
             android:name=".MainActivity"
@@ -53,10 +51,5 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!-- Flutter embedding -->
-        <meta-data
-            android:name="flutterEmbedding"
-            android:value="2" />
     </application>
 </manifest>
