@@ -1,4 +1,4 @@
-name: ble_scanner_app
+name: ble_smart_device_scanner
 description: A Flutter app for scanning and connecting to BLE devices.
 publish_to: 'none'
 version: 1.0.0+1
