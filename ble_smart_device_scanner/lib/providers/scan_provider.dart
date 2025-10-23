@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import '../models/ble_device.dart';
 import '../services/ble_service.dart';
 
