@@ -10,7 +10,6 @@ class BleScanScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final scanState = ref.watch(scanProvider);
     final scanNotifier = ref.read(scanProvider.notifier);
-    final filteredDevices = scanNotifier.getFilteredDevices();
 
     return Scaffold(
       appBar: AppBar(
@@ -27,7 +26,7 @@ class BleScanScreen extends ConsumerWidget {
                 TextField(
                   decoration: InputDecoration(
                     labelText: 'Filter by Name',
-                    border: const OutlineInputBorder(),
+                    border: OutlineInputBorder(),
                     filled: true,
                     fillColor: Theme.of(context).colorScheme.surfaceContainer,
                   ),
@@ -64,7 +63,7 @@ class BleScanScreen extends ConsumerWidget {
                 Expanded(
                   child: scanState.isScanning
                       ? const Center(child: CircularProgressIndicator())
-                      : filteredDevices.isEmpty
+                      : scanState.filteredDevices.isEmpty
                       ? const Center(child: Text('No devices found'))
                       : constraints.maxWidth > 600
                       ? GridView.builder(
@@ -74,15 +73,15 @@ class BleScanScreen extends ConsumerWidget {
                       crossAxisSpacing: 8,
                       mainAxisSpacing: 8,
                     ),
-                    itemCount: filteredDevices.length,
+                    itemCount: scanState.filteredDevices.length,
                     itemBuilder: (context, index) {
-                      return DeviceListItem(device: filteredDevices[index]);
+                      return DeviceListItem(device: scanState.filteredDevices[index]);
                     },
                   )
                       : ListView.builder(
-                    itemCount: filteredDevices.length,
+                    itemCount: scanState.filteredDevices.length,
                     itemBuilder: (context, index) {
-                      return DeviceListItem(device: filteredDevices[index]);
+                      return DeviceListItem(device: scanState.filteredDevices[index]);
                     },
                   ),
                 ),

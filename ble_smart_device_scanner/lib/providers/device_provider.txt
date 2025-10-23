@@ -44,27 +44,12 @@ class DeviceNotifier extends StateNotifier<DeviceState> {
   }
 
   void _listenToConnectionState() {
-    state.device.device.connectionState.listen((BluetoothConnectionState connectionState) {
-      // Convert BluetoothConnectionState to BluetoothDeviceState
-      final deviceState = _convertToDeviceState(connectionState);
-      state = state.copyWith(connectionState: deviceState);
-      if (deviceState == BluetoothDeviceState.disconnected && state.connectionState != BluetoothDeviceState.disconnecting) {
+    state.device.device.state.listen((BluetoothDeviceState newState) {
+      state = state.copyWith(connectionState: newState);
+      if (newState == BluetoothDeviceState.disconnected && state.connectionState != BluetoothDeviceState.disconnecting) {
         _autoReconnect();
       }
     });
-  }
-
-  BluetoothDeviceState _convertToDeviceState(BluetoothConnectionState connectionState) {
-    switch (connectionState) {
-      case BluetoothConnectionState.connected:
-        return BluetoothDeviceState.connected;
-      case BluetoothConnectionState.connecting:
-        return BluetoothDeviceState.connecting;
-      case BluetoothConnectionState.disconnecting:
-        return BluetoothDeviceState.disconnecting;
-      case BluetoothConnectionState.disconnected:
-        return BluetoothDeviceState.disconnected;
-    }
   }
 
   Future<void> connect() async {
