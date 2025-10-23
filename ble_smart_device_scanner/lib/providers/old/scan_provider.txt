@@ -82,25 +82,15 @@ class ScanNotifier extends StateNotifier<ScanState> {
     state = state.copyWith(filterType: type);
   }
 
-  // Add this method to get filtered devices
-  List<BleDevice> getFilteredDevices() {
+  List<BleDevice> get filteredDevices {
     var devices = state.devices;
     if (state.filterQuery.isNotEmpty) {
       devices = devices.where((d) => d.name.toLowerCase().contains(state.filterQuery.toLowerCase())).toList();
     }
     if (state.filterType == 'Audio Devices') {
-      // Use manufacturer data or name for audio device detection
-      devices = devices.where((d) =>
-      d.name.toLowerCase().contains('headphone') ||
-          d.name.toLowerCase().contains('earbud') ||
-          d.name.toLowerCase().contains('speaker') ||
-          d.name.toLowerCase().contains('audio')).toList();
+      devices = devices.where((d) => d.device.advData.serviceUuids.contains(Guid('0000110B-0000-1000-8000-00805F9B34FB'))).toList();
     } else if (state.filterType == 'Smartwatches') {
-      devices = devices.where((d) =>
-      d.name.toLowerCase().contains('watch') ||
-          d.name.toLowerCase().contains('fitbit') ||
-          d.name.toLowerCase().contains('galaxy') ||
-          d.name.toLowerCase().contains('apple')).toList();
+      devices = devices.where((d) => d.name.toLowerCase().contains('watch') || d.name.toLowerCase().contains('fitbit')).toList();
     }
     return devices;
   }
