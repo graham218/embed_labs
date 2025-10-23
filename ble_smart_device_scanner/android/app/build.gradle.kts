@@ -7,9 +7,9 @@ plugins {
 
 android {
     namespace = "com.embedlabs.ble_smart_device_scanner"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = flutter.compileSdkVersion.toInt()
 
-    //Fixed NDK version
+    // Fixed NDK version
     ndkVersion = "27.0.12077973"
 
     compileOptions {
@@ -23,9 +23,9 @@ android {
 
     defaultConfig {
         applicationId = "com.embedlabs.ble_smart_device_scanner"
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
-        versionCode = flutter.versionCode
+        minSdk = flutter.minSdkVersion.toInt()
+        targetSdk = flutter.targetSdkVersion.toInt()
+        versionCode = flutter.versionCode.toInt()
         versionName = flutter.versionName
     }
 
@@ -34,7 +34,7 @@ android {
             // TODO: Add your own signing config for the release build if needed
             // signingConfig = signingConfigs.release
 
-            //Disable shrinking for now (fixes your current build error)
+            // Disable shrinking for now (fixes your current build error)
             isMinifyEnabled = false
             isShrinkResources = false
 
@@ -45,7 +45,7 @@ android {
         }
 
         debug {
-            //Make sure shrinking is off in debug mode too
+            // Make sure shrinking is off in debug mode too
             isMinifyEnabled = false
             isShrinkResources = false
         }
@@ -57,5 +57,5 @@ flutter {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.0") // Added version for stability
 }
