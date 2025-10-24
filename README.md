@@ -57,12 +57,6 @@ Below are key projects and folders under this repository:
 | Project | Description | Tech Highlights |
 |----------|--------------|-----------------|
 | [**ble_smart_device_scanner**](./ble_smart_device_scanner) | A Flutter BLE app for scanning and connecting to smart IoT devices. | Flutter • Riverpod • Bluetooth LE |
-| [**arduino_sensor_hub**](./arduino_sensor_hub) | Collects environmental data (temp, humidity, gas) and transmits via MQTT. | Arduino • ESP32 • MQTT • C++ |
-| [**iot_dashboard_flutter**](./iot_dashboard_flutter) | A mobile dashboard visualizing real-time sensor data. | Flutter • WebSockets • Charts |
-| [**node_api_gateway**](./node_api_gateway) | A Node.js REST API to manage IoT data and devices. | Node.js • Express • MongoDB |
-| [**spring_iot_backend**](./spring_iot_backend) | Enterprise-level backend service for device management. | Java • Spring Boot • REST |
-| [**python_automation_tools**](./python_automation_tools) | Scripts for automation, ML, and system integration. | Python • Pandas • TensorFlow |
-| [**raspberrypi_edge_agent**](./raspberrypi_edge_agent) | Raspberry Pi application for edge device coordination. | Python • GPIO • MQTT |
 
 > 🧩 More projects and experiments coming soon — stay tuned for updates!
 
