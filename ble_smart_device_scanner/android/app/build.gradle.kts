@@ -1,12 +1,24 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// ---------------------------------------------------------------
+// Load key.properties (the file you already created)
+// ---------------------------------------------------------------
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+}
+
 android {
     namespace = "com.embedlabs.ble_smart_device_scanner"
-    compileSdk = 34                     // latest stable
+    compileSdk = 34
 
     ndkVersion = "27.0.12077973"
 
@@ -21,7 +33,7 @@ android {
 
     defaultConfig {
         applicationId = "com.embedlabs.ble_smart_device_scanner"
-        minSdk = 21                     // Android 5.0+
+        minSdk = 21
         targetSdk = 34
         versionCode = 1
         versionName = "1.0.0"
@@ -30,9 +42,21 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    // ---------------------------------------------------------------
+    // SIGNING CONFIGS – use your keystore
+    // ---------------------------------------------------------------
+    signingConfigs {
+        create("release") {
+            keyAlias = keystoreProperties["keyAlias"] as String
+            keyPassword = keystoreProperties["keyPassword"] as String
+            storeFile = file(keystoreProperties["storeFile"] as String)
+            storePassword = keystoreProperties["storePassword"] as String
+        }
+    }
+
     buildTypes {
         release {
-            // ---- SIGNING (see step 2) ----
+            // Use the release signing config we just created
             signingConfig = signingConfigs.getByName("release")
 
             isMinifyEnabled = true
