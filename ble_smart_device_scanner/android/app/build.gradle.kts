@@ -56,15 +56,13 @@ android {
 
     buildTypes {
         release {
-            // Use the release signing config we just created
+            // Use your real keystore
             signingConfig = signingConfigs.getByName("release")
 
-            isMinifyEnabled = true
-            isShrinkResources = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            // DISABLE SHRINKING & OBFUSCATION
+            isMinifyEnabled = false
+            isShrinkResources = false
+
             isDebuggable = false
         }
         debug {
@@ -73,7 +71,6 @@ android {
             isDebuggable = true
         }
     }
-
     buildFeatures {
         buildConfig = true
     }
