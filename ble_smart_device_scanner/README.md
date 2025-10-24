@@ -98,6 +98,43 @@ Add the following to `ios/Runner/Info.plist`:
 
 ---
 
+## 📲 Download APK
+
+<p align="center">
+  <a href="./apk/app-release.apk" download>
+    <img src="https://img.shields.io/badge/⬇️%20Download%20APK-blue?style=for-the-badge&logo=android&logoColor=white" alt="Download APK"/>
+  </a>
+</p>
+
+---
+
+## 📸 Screenshots
+
+<p align="center">
+  <img src="./assets/shots/web_smart_screen.jpg" width="700" style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);" alt="App Screenshot"/>
+  <br>
+  <em>Clean, elegant, and responsive interface across devices.</em>
+</p>
+
+---
+
+## 🎥 Demo Videos
+
+<div align="center">
+
+### 🧱 Pre-format UI
+<video src="./assets/shots/pre_format.mp4" width="600" controls></video>
+
+### 🎨 Post-format UI
+<video src="./assets/shots/post_format.mp4" width="600" controls></video>
+
+### ⚙️ Max Web Plus Code
+<video src="./assets/shots/max_web_plus_code.mp4" width="600" controls></video>
+
+</div>
+
+---
+
 ## 🧠 State Management
 
 > Powered by **Riverpod** for structured and reactive state updates.
@@ -120,17 +157,6 @@ Add the following to `ios/Runner/Info.plist`:
 
 ---
 
-## 📸 Screenshots / Demo
-
-<p align="center">
-  <img src="https://github.com/graham218/embed_labs/assets/demo1.gif" width="250" style="box-shadow: 0 4px 12px rgba(0,0,0,0.2); border-radius: 16px;"/>
-  <img src="https://github.com/graham218/embed_labs/assets/demo2.gif" width="250" style="box-shadow: 0 4px 12px rgba(0,0,0,0.2); border-radius: 16px;"/>
-  <br>
-  <em>Beautiful, smooth, and responsive — optimized for all screen sizes.</em>
-</p>
-
----
-
 ## 📂 Project Structure
 
 ```
@@ -145,6 +171,8 @@ ble_smart_device_scanner/
 │
 ├── android/                 # Android-specific config
 ├── ios/                     # iOS-specific config
+├── apk/                     # Contains app-release.apk
+├── assets/shots/            # Screenshots and demo videos
 └── pubspec.yaml             # Dependencies & metadata
 ```
 
@@ -190,4 +218,3 @@ This project is licensed under the [MIT License](LICENSE).
   <br><br>
   <b>BLE Smart Device Scanner</b> — Built with Flutter 💙
 </p>
-
