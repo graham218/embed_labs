@@ -16,6 +16,8 @@ dependencies:
   device_info_plus: ^12.2.0
   fl_chart: ^0.68.0
   collection: ^1.19.1
+  google_fonts: ^6.3.2
+  animate_do: ^4.2.0
 
 dev_dependencies:
   flutter_test:
