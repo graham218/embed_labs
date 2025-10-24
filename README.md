@@ -120,8 +120,9 @@ This repository and all subprojects are licensed under the [MIT License](LICENSE
 ---
 
 <p align="center">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Internet_of_Things.svg" width="70" alt="IoT Icon"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/raspberrypi/raspberrypi-original.svg" width="70" alt="IoT Icon"/>
   <br>
   <b>Embed Labs</b> — Building the Future of Connected Systems 🌐⚙️
 </p>
+
 
