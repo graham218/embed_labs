@@ -118,18 +118,18 @@ Add the following to `ios/Runner/Info.plist`:
 
 ---
 
-## 🎥 Demo Videos
+## 🎞️ Demo GIFs
 
 <div align="center">
 
 ### 🧱 Pre-format UI
-<video src="./assets/shots/pre_format.mp4" width="600" controls></video>
+<img src="./assets/shots/pre_format.gif" width="600" style="border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.3);" alt="Pre-format Demo"/>
 
 ### 🎨 Post-format UI
-<video src="./assets/shots/post_format.mp4" width="600" controls></video>
+<img src="./assets/shots/post_format.gif" width="600" style="border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.3);" alt="Post-format Demo"/>
 
 ### ⚙️ Max Web Plus Code
-<video src="./assets/shots/max_web_plus_code.mp4" width="600" controls></video>
+<img src="./assets/shots/max_web_plus_code.gif" width="600" style="border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.3);" alt="Max Web Plus Code Demo"/>
 
 </div>
 
@@ -172,7 +172,7 @@ ble_smart_device_scanner/
 ├── android/                 # Android-specific config
 ├── ios/                     # iOS-specific config
 ├── apk/                     # Contains app-release.apk
-├── assets/shots/            # Screenshots and demo videos
+├── assets/shots/            # Screenshots and demo GIFs
 └── pubspec.yaml             # Dependencies & metadata
 ```
 
