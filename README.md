@@ -1,6 +1,6 @@
 <!-- HEADER -->
 <h1 align="center">
-  <img src="https://img.icons8.com/fluency/96/microchip.png" width="80" alt="Embed Labs Logo"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/embeddedc/embeddedc-original.svg" width="80" alt="Embed Labs Logo"/>
   <br>
   <b>Embed Labs</b>
 </h1>
