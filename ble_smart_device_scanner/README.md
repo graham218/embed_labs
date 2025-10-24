@@ -186,7 +186,8 @@ This project is licensed under the [MIT License](LICENSE).
 ---
 
 <p align="center">
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/bluetooth/bluetooth-original.svg" width="60" />
+  <img src="https://img.icons8.com/color/96/bluetooth--v1.png" width="60" alt="Bluetooth Icon"/>
   <br><br>
   <b>BLE Smart Device Scanner</b> — Built with Flutter 💙
 </p>
+
