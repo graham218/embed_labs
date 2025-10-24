@@ -55,299 +55,329 @@ class _BleScanScreenState extends ConsumerState<BleScanScreen>
     final scanState = ref.watch(scanProvider);
     final scanNotifier = ref.read(scanProvider.notifier);
     final filteredDevices = scanNotifier.getFilteredDevices();
-    final size = MediaQuery.of(context).size;
-    final isLargeScreen = size.width > 600;
+    final colorScheme = Theme.of(context).colorScheme;
+    final isLargeScreen = MediaQuery.of(context).size.width > 600;
 
-    // Background gradient
-    final backgroundGradient = LinearGradient(
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-      colors: [
-        Theme.of(context).colorScheme.primaryContainer.withOpacity(0.1),
-        Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.1),
-        Theme.of(context).colorScheme.tertiaryContainer.withOpacity(0.1),
-      ],
-      stops: const [0.1, 0.5, 0.9],
-    );
-
-    // Main content card
-    Widget contentCard = SlideTransition(
+    Widget content = SlideTransition(
       position: _slideAnimation,
       child: FadeTransition(
         opacity: _fadeAnimation,
-        child: Card(
-          elevation: 8,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Theme.of(context).colorScheme.surface,
-                  Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
-                ],
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header Section
+            _buildHeaderSection(colorScheme),
+            const SizedBox(height: 24),
+
+            // Filter Controls Card
+            Card(
+              elevation: 8,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
               ),
-            ),
-            child: Padding(
-              padding: EdgeInsets.all(isLargeScreen ? 32.0 : 16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Header with logo
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Theme.of(context).colorScheme.primary,
-                              Theme.of(context).colorScheme.primaryContainer,
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(16),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    // Search Field
+                    TextField(
+                      decoration: InputDecoration(
+                        labelText: 'Filter by Name',
+                        labelStyle: TextStyle(
+                          color: colorScheme.onSurface.withOpacity(0.7),
                         ),
-                        child: Icon(
-                          Icons.bluetooth_searching,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                          size: 32,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
                         ),
+                        filled: true,
+                        fillColor: colorScheme.surfaceContainerHighest,
+                        prefixIcon:
+                        Icon(Icons.search, color: colorScheme.primary),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 16),
                       ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                      onChanged: scanNotifier.setFilterQuery,
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Filter Type Dropdown
+                    DropdownButtonFormField<String>(
+                      value: scanState.filterType,
+                      isExpanded: true,
+                      decoration: InputDecoration(
+                        labelText: 'Filter by Type',
+                        labelStyle: TextStyle(
+                          color: colorScheme.onSurface.withOpacity(0.7),
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
+                        filled: true,
+                        fillColor: colorScheme.surfaceContainerHighest,
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                      ),
+                      items: ['All', 'Audio Devices', 'Smartwatches']
+                          .map((type) => DropdownMenuItem(
+                        value: type,
+                        child: Row(
                           children: [
-                            Text(
-                              'BLE SCANNER',
-                              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                            ),
-                            Text(
-                              'Discover nearby Bluetooth devices',
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                              ),
-                            ),
+                            _getFilterIcon(type),
+                            const SizedBox(width: 12),
+                            Text(type),
                           ],
                         ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // Filter section
-                  Card(
-                    elevation: 2,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      ))
+                          .toList(),
+                      onChanged: (value) =>
+                          scanNotifier.setFilterType(value ?? 'All'),
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        children: [
-                          TextField(
-                            decoration: InputDecoration(
-                              labelText: 'Filter by Name',
-                              prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.primary),
-                              border: const OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(12)),
-                              ),
-                              filled: true,
-                              fillColor: Theme.of(context).colorScheme.surfaceContainerLow,
-                            ),
-                            onChanged: scanNotifier.setFilterQuery,
+                    const SizedBox(height: 16),
+
+                    // Scan Button
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      child: ElevatedButton.icon(
+                        icon: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          child: Icon(
+                            scanState.isScanning
+                                ? Icons.stop
+                                : Icons.play_arrow,
+                            key: ValueKey(scanState.isScanning),
                           ),
-                          const SizedBox(height: 12),
-                          DropdownButtonFormField<String>(
-                            value: scanState.filterType,
-                            isExpanded: true,
-                            decoration: InputDecoration(
-                              prefixIcon: Icon(Icons.filter_list, color: Theme.of(context).colorScheme.primary),
-                              border: const OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(12)),
-                              ),
-                              filled: true,
-                              fillColor: Theme.of(context).colorScheme.surfaceContainerLow,
-                            ),
-                            items: ['All', 'Audio Devices', 'Smartwatches']
-                                .map((type) => DropdownMenuItem(
-                              value: type,
-                              child: Text(type),
-                            ))
-                                .toList(),
-                            onChanged: (value) => scanNotifier.setFilterType(value ?? 'All'),
+                        ),
+                        label: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          child: Text(
+                            scanState.isScanning
+                                ? 'Stop Scanning'
+                                : 'Start Scanning',
+                            key: ValueKey(scanState.isScanning),
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Scan button
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: scanState.isScanning
-                          ? [
-                        BoxShadow(
-                          color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
-                          blurRadius: 8,
-                          spreadRadius: 2,
-                        )
-                      ]
-                          : null,
-                    ),
-                    child: ElevatedButton.icon(
-                      icon: AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 300),
-                        child: Icon(
-                          scanState.isScanning ? Icons.stop : Icons.play_arrow,
-                          key: ValueKey(scanState.isScanning),
                         ),
-                      ),
-                      label: AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 300),
-                        child: Text(
-                          scanState.isScanning ? 'Stop Scanning' : 'Start Scanning',
-                          key: ValueKey(scanState.isScanning),
-                        ),
-                      ),
-                      onPressed: scanState.isScanning
-                          ? scanNotifier.stopScan
-                          : scanNotifier.startScan,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: scanState.isScanning
-                            ? Theme.of(context).colorScheme.errorContainer
-                            : Theme.of(context).colorScheme.primaryContainer,
-                        foregroundColor: scanState.isScanning
-                            ? Theme.of(context).colorScheme.onErrorContainer
-                            : Theme.of(context).colorScheme.onPrimaryContainer,
-                        minimumSize: const Size(double.infinity, 56),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                        onPressed: scanState.isScanning
+                            ? scanNotifier.stopScan
+                            : scanNotifier.startScan,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: scanState.isScanning
+                              ? colorScheme.error
+                              : colorScheme.primary,
+                          foregroundColor: colorScheme.onPrimary,
+                          minimumSize: const Size(double.infinity, 56),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 4,
+                          shadowColor: colorScheme.primary.withOpacity(0.3),
                         ),
                       ),
                     ),
-                  ),
 
-                  if (scanState.error != null)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 12),
-                      child: Card(
-                        color: Theme.of(context).colorScheme.errorContainer,
-                        child: Padding(
-                          padding: const EdgeInsets.all(12.0),
+                    // Error Message
+                    if (scanState.error != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: colorScheme.errorContainer,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                           child: Row(
                             children: [
-                              Icon(Icons.error_outline, color: Theme.of(context).colorScheme.onErrorContainer),
+                              Icon(Icons.error_outline,
+                                  color: colorScheme.error),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
                                   scanState.error!,
-                                  style: TextStyle(color: Theme.of(context).colorScheme.onErrorContainer),
+                                  style: TextStyle(
+                                      color: colorScheme.onErrorContainer),
                                 ),
                               ),
                             ],
                           ),
                         ),
                       ),
-                    ),
-
-                  const SizedBox(height: 24),
-
-                  // Results section
-                  Text(
-                    'Discovered Devices (${filteredDevices.length})',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  Expanded(
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 500),
-                      child: scanState.isScanning
-                          ? _buildScanningAnimation()
-                          : filteredDevices.isEmpty
-                          ? _buildEmptyState()
-                          : _buildDeviceList(filteredDevices, isLargeScreen),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
+            const SizedBox(height: 24),
+
+            // Results Section
+            _buildResultsSection(scanState, filteredDevices, colorScheme),
+          ],
         ),
       ),
     );
 
-    // For large screens, center the card with constraints
+    // Large Screen Layout
     if (isLargeScreen) {
       return Scaffold(
+        backgroundColor: Colors.transparent,
         body: Container(
-          width: double.infinity,
-          height: double.infinity,
-          decoration: BoxDecoration(gradient: backgroundGradient),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                colorScheme.primaryContainer.withOpacity(0.1),
+                colorScheme.secondaryContainer.withOpacity(0.1),
+              ],
+            ),
+          ),
           child: Center(
             child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxWidth: size.width * 0.8,
-                maxHeight: size.height * 0.9,
+              constraints: const BoxConstraints(maxWidth: 800),
+              child: Card(
+                elevation: 24,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                margin: const EdgeInsets.all(24),
+                child: Padding(
+                  padding: const EdgeInsets.all(32),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      return SingleChildScrollView(
+                        child: ConstrainedBox(
+                          constraints:
+                          BoxConstraints(minHeight: constraints.maxHeight),
+                          child: IntrinsicHeight(child: content),
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ),
-              child: contentCard,
             ),
           ),
         ),
       );
     }
 
-    // For mobile screens
+    // Mobile Layout
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: BoxDecoration(gradient: backgroundGradient),
-        child: contentCard,
+      backgroundColor: colorScheme.surface,
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints:
+                BoxConstraints(minHeight: constraints.maxHeight),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: content,
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
 
-  Widget _buildScanningAnimation() {
+  Widget _buildHeaderSection(ColorScheme colorScheme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    colorScheme.primary,
+                    colorScheme.primaryContainer,
+                  ],
+                ),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.bluetooth, color: Colors.white),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              'BLE Scanner',
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: colorScheme.onSurface,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Discover and connect to nearby Bluetooth devices',
+          style: TextStyle(
+            fontSize: 16,
+            color: colorScheme.onSurface.withOpacity(0.7),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildResultsSection(
+      ScanState scanState, List<dynamic> filteredDevices, ColorScheme colorScheme) {
+    return Card(
+      elevation: 8,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Discovered Devices',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: colorScheme.onSurface,
+              ),
+            ),
+            const SizedBox(height: 16),
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 500),
+              child: scanState.isScanning
+                  ? _buildLoadingState(colorScheme)
+                  : filteredDevices.isEmpty
+                  ? _buildEmptyState(colorScheme)
+                  : _buildDeviceList(filteredDevices),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoadingState(ColorScheme colorScheme) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            width: 80,
-            height: 80,
+            width: 60,
+            height: 60,
             child: CircularProgressIndicator(
-              strokeWidth: 8,
-              valueColor: AlwaysStoppedAnimation<Color>(
-                Theme.of(context).colorScheme.primary,
-              ),
+              strokeWidth: 3,
+              valueColor:
+              AlwaysStoppedAnimation<Color>(colorScheme.primary),
             ),
           ),
           const SizedBox(height: 16),
           Text(
             'Scanning for devices...',
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Please wait while we discover nearby BLE devices',
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            style: TextStyle(
+              color: colorScheme.onSurface.withOpacity(0.7),
             ),
           ),
         ],
@@ -355,70 +385,82 @@ class _BleScanScreenState extends ConsumerState<BleScanScreen>
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(ColorScheme colorScheme) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.devices_other,
-            size: 64,
-            color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.5),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'No devices found',
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Try adjusting your filters or start a new scan',
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 40),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.devices_other,
+              size: 64,
+              color: colorScheme.onSurface.withOpacity(0.3),
             ),
-          ),
-        ],
+            const SizedBox(height: 16),
+            Text(
+              'No devices found',
+              style: TextStyle(
+                fontSize: 16,
+                color: colorScheme.onSurface.withOpacity(0.5),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Try adjusting your filters or start scanning',
+              style: TextStyle(
+                fontSize: 14,
+                color: colorScheme.onSurface.withOpacity(0.4),
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildDeviceList(List<dynamic> devices, bool isLargeScreen) {
-    return AnimatedOpacity(
-      duration: const Duration(milliseconds: 500),
-      opacity: 1.0,
-      child: isLargeScreen
-          ? GridView.builder(
+  Widget _buildDeviceList(List<dynamic> filteredDevices) {
+    final isLargeScreen = MediaQuery.of(context).size.width > 600;
+
+    if (isLargeScreen) {
+      return GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
           maxCrossAxisExtent: 300,
-          childAspectRatio: 2,
+          childAspectRatio: 2.2,
           crossAxisSpacing: 12,
           mainAxisSpacing: 12,
         ),
-        itemCount: devices.length,
+        itemCount: filteredDevices.length,
         itemBuilder: (context, index) {
-          return Card(
-            elevation: 4,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: DeviceListItem(device: devices[index]),
+          return DeviceListItem(device: filteredDevices[index]);
+        },
+      );
+    } else {
+      return ListView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: filteredDevices.length,
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: DeviceListItem(device: filteredDevices[index]),
           );
         },
-      )
-          : ListView.builder(
-        itemCount: devices.length,
-        itemBuilder: (context, index) {
-          return Card(
-            elevation: 2,
-            margin: const EdgeInsets.only(bottom: 8),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: DeviceListItem(device: devices[index]),
-          );
-        },
-      ),
-    );
+      );
+    }
+  }
+
+  Icon _getFilterIcon(String type) {
+    switch (type) {
+      case 'Audio Devices':
+        return const Icon(Icons.headphones);
+      case 'Smartwatches':
+        return const Icon(Icons.watch);
+      default:
+        return const Icon(Icons.all_inclusive);
+    }
   }
 }
