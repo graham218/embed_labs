@@ -18,7 +18,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.embedlabs.ble_smart_device_scanner"
-    compileSdk = 34
+    compileSdk = 35
 
     ndkVersion = "27.0.12077973"
 
