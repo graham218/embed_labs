@@ -68,7 +68,8 @@ class _BleScanScreenState extends ConsumerState<BleScanScreen>
             // Header Section
             _buildHeaderSection(colorScheme),
             const SizedBox(height: 24),
-// Filter Controls Card
+
+            // Filter Controls Card
             Card(
               elevation: 8,
               shape: RoundedRectangleBorder(
@@ -81,7 +82,7 @@ class _BleScanScreenState extends ConsumerState<BleScanScreen>
                     // Search Field
                     TextField(
                       decoration: InputDecoration(
-                        labelText: 'Filter by Name, ID, or Type',
+                        labelText: 'Filter by Name',
                         labelStyle: TextStyle(
                           color: colorScheme.onSurface.withOpacity(0.7),
                         ),
@@ -105,7 +106,7 @@ class _BleScanScreenState extends ConsumerState<BleScanScreen>
                       value: scanState.filterType,
                       isExpanded: true,
                       decoration: InputDecoration(
-                        labelText: 'Filter by Category',
+                        labelText: 'Filter by Type',
                         labelStyle: TextStyle(
                           color: colorScheme.onSurface.withOpacity(0.7),
                         ),
@@ -118,7 +119,7 @@ class _BleScanScreenState extends ConsumerState<BleScanScreen>
                         contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 8),
                       ),
-                      items: ['All', 'Audio Devices', 'Smartwatches', 'Phones']
+                      items: ['All', 'Audio Devices', 'Smartwatches']
                           .map((type) => DropdownMenuItem(
                         value: type,
                         child: Row(
@@ -135,53 +136,6 @@ class _BleScanScreenState extends ConsumerState<BleScanScreen>
                     ),
                     const SizedBox(height: 16),
 
-                    // BLE Only Toggle
-                    Card(
-                      elevation: 2,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.bluetooth,
-                              color: scanState.showOnlyBleDevices ? Colors.blue : colorScheme.onSurface.withOpacity(0.6),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Show BLE Devices Only',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      color: scanState.showOnlyBleDevices ? Colors.blue : colorScheme.onSurface,
-                                    ),
-                                  ),
-                                  Text(
-                                    'Filter out classic Bluetooth devices',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: colorScheme.onSurface.withOpacity(0.6),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Switch(
-                              value: scanState.showOnlyBleDevices,
-                              onChanged: scanNotifier.toggleBleOnlyFilter,
-                              activeColor: Colors.blue,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
                     // Scan Button
                     AnimatedContainer(
                       duration: const Duration(milliseconds: 300),
@@ -191,7 +145,7 @@ class _BleScanScreenState extends ConsumerState<BleScanScreen>
                           child: Icon(
                             scanState.isScanning
                                 ? Icons.stop
-                                : Icons.search,
+                                : Icons.play_arrow,
                             key: ValueKey(scanState.isScanning),
                           ),
                         ),
@@ -200,7 +154,7 @@ class _BleScanScreenState extends ConsumerState<BleScanScreen>
                           child: Text(
                             scanState.isScanning
                                 ? 'Stop Scanning'
-                                : 'Scan All Devices',
+                                : 'Start Scanning',
                             key: ValueKey(scanState.isScanning),
                           ),
                         ),
@@ -221,30 +175,6 @@ class _BleScanScreenState extends ConsumerState<BleScanScreen>
                         ),
                       ),
                     ),
-
-                    // Scanning Info
-                    if (scanState.isScanning)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 12),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.info_outline,
-                              size: 16,
-                              color: colorScheme.primary,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              'Scanning for BLE and Classic Bluetooth devices...',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: colorScheme.primary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
 
                     // Error Message
                     if (scanState.error != null)
