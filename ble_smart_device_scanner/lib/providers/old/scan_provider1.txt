@@ -1,10 +1,8 @@
-import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import '../models/ble_device.dart';
 import '../services/ble_service.dart';
 
-final scanProvider = StateNotifierProvider<ScanNotifier, ScanState>((ref) => ScanNotifier());
+final scanProvider = StateNotifierProvider<ScanNotifier, ScanState>((ref) => ScanNotifier(ref));
 
 class ScanState {
   final List<BleDevice> devices;
@@ -39,62 +37,39 @@ class ScanState {
 }
 
 class ScanNotifier extends StateNotifier<ScanState> {
+  final Ref ref;
   final BleService _bleService = BleService();
-  StreamSubscription? _scanSubscription;
 
-  ScanNotifier() : super(ScanState());
+  ScanNotifier(this.ref) : super(ScanState());
 
   Future<void> startScan() async {
-    state = state.copyWith(isScanning: true, error: null, devices: []);
-
     if (!await _bleService.checkPermissions()) {
-      state = state.copyWith(
-        error: 'Permissions denied. Grant Bluetooth and Location.',
-        isScanning: false,
-      );
+      state = state.copyWith(error: 'Permissions denied. Please grant Bluetooth and Location permissions.');
       return;
     }
-
     if (!await _bleService.checkBluetooth()) {
-      state = state.copyWith(
-        error: 'Bluetooth is off or unsupported.',
-        isScanning: false,
-      );
+      state = state.copyWith(error: 'Bluetooth is off or unsupported.');
       return;
     }
-
-    try {
-      await FlutterBluePlus.startScan(
-        timeout: const Duration(seconds: 30),
-        androidUsesFineLocation: true,
-        androidScanMode: AndroidScanMode.lowLatency,
-      );
-
-      _scanSubscription = FlutterBluePlus.onScanResults.listen(
-            (results) {
-          final devices = results
-              .where((r) => r.advertisementData.connectable)
-              .map((r) => BleDevice.fromScanResult(r))
-              .toList();
-
-          state = state.copyWith(devices: devices);
-        },
-        onError: (e) => state = state.copyWith(error: e.toString()),
-      );
-
-      FlutterBluePlus.isScanning.where((s) => !s).first.then((_) {
-        if (state.isScanning) {
-          state = state.copyWith(isScanning: false);
-        }
-      });
-    } catch (e) {
-      state = state.copyWith(error: 'Scan failed: $e', isScanning: false);
-    }
+    state = state.copyWith(isScanning: true, error: null);
+    _bleService.startScan().listen(
+          (results) {
+        state = state.copyWith(
+          devices: results.map((r) => BleDevice.fromScanResult(r)).toList(),
+          isScanning: true,
+        );
+      },
+      onError: (e) {
+        state = state.copyWith(error: 'Scan failed: $e', isScanning: false);
+      },
+      onDone: () {
+        state = state.copyWith(isScanning: false);
+      },
+    );
   }
 
   void stopScan() {
-    _scanSubscription?.cancel();
-    FlutterBluePlus.stopScan();
+    _bleService.stopScan();
     state = state.copyWith(isScanning: false);
   }
 
@@ -106,24 +81,19 @@ class ScanNotifier extends StateNotifier<ScanState> {
     state = state.copyWith(filterType: type);
   }
 
+  // Add this method to get filtered devices
   List<BleDevice> getFilteredDevices() {
     var devices = state.devices;
-
     if (state.filterQuery.isNotEmpty) {
-      devices = devices
-          .where((d) => d.name.toLowerCase().contains(state.filterQuery.toLowerCase()))
-          .toList();
+      devices = devices.where((d) => d.name.toLowerCase().contains(state.filterQuery.toLowerCase())).toList();
     }
-
     if (state.filterType == 'Audio Devices') {
+      // Use manufacturer data or name for audio device detection
       devices = devices.where((d) =>
       d.name.toLowerCase().contains('headphone') ||
           d.name.toLowerCase().contains('earbud') ||
           d.name.toLowerCase().contains('speaker') ||
-          d.name.toLowerCase().contains('audio') ||
-          d.name.toLowerCase().contains('jbl') ||
-          d.name.toLowerCase().contains('bose') ||
-          d.name.toLowerCase().contains('sony')).toList();
+          d.name.toLowerCase().contains('audio')).toList();
     } else if (state.filterType == 'Smartwatches') {
       devices = devices.where((d) =>
       d.name.toLowerCase().contains('watch') ||
@@ -131,13 +101,6 @@ class ScanNotifier extends StateNotifier<ScanState> {
           d.name.toLowerCase().contains('galaxy') ||
           d.name.toLowerCase().contains('apple')).toList();
     }
-
     return devices;
-  }
-
-  @override
-  void dispose() {
-    _scanSubscription?.cancel();
-    super.dispose();
   }
 }
